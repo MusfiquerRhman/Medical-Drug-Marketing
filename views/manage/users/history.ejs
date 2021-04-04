@@ -1,0 +1,100 @@
+<%- include('../../partials/header'); -%> 
+<div class="header_secondary">
+    <h1 class="header_secondary--title">Your purchase history</h1>
+</div>
+
+<div class="flash">
+    <% if(error && error.length > 0){ %> 
+        <div class="flash_error">
+            <h1 class="flash_error--text"><%= error %></h1> 
+        </div>
+    <% } %> 
+    <% if(success && success.length > 0){ %> 
+        <div class="flash_success">
+            <h1 class="flash_success--text"><%= success %></h1> 
+        </div>
+    <% } %> 
+</div>
+
+<div class="orders">
+    <% if(history.length == 0){ %>
+        <div class="suggestion">
+            <p>No orders</p>
+        </div>
+    <% } else { %>
+        <div class="history">
+            <% var pre = "";
+            var next = "";
+            var total = 0;
+            var price = 0; %>
+            <% for(var i = 0; i < history.length; i++) { %>
+                <% if(pre != history[i].DELIVERED_DATE.toString()) { %>
+                    <div class="orders-in">
+                    <% pre = history[i].DELIVERED_DATE.toString() %> 
+
+                        <table class="orders_table">
+                            <tr>
+                                <th>Drug name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                                <th>Delivery Date</th>
+                            </tr>
+                <% } %> 
+                <% if(i+1 < history.length) { %> 
+                    <% next = history[i+1].DELIVERED_DATE.toString(); %>
+                <% } %>
+                            <tr>
+                                <td><%= history[i].DRUG_NAME %></td>
+                                <td><%= history[i].DRUG_PRICE %></td>
+                                <td><%= history[i].DELIVERED_QUANTITY%></td>
+                                <td><%= history[i].TOTAL_PRICE %></td>
+                                    <% var date = history[i].DELIVERED_DATE; %>
+                                    <% var dateArr = date.toString().split(" ") %>  
+                                    <% var month = dateArr[1]; %>
+                                    <% var day = dateArr[2]; %> 
+                                    <% var year = dateArr[3]; %> 
+                                    <% var time = dateArr[4].split(":"); %> 
+                                    <% var hour = time[0]; %> 
+                                    <% var min = time[1]; %> 
+                                    <% var sec = time[2]; %> 
+                                    <% var postfix = "" %> 
+                                    <% if(Number(hour) > 12){ %>
+                                        <% hour = Number(hour) - 12; %> 
+                                        <% postfix = "PM"; %> 
+                                    <% } else if(Number(hour) == 12){ %>
+                                        <% postfix = "PM"; %> 
+                                    <% } else { %>
+                                        <% postfix = "AM"; %> 
+                                    <% } %> 
+                                <td><%= hour %>:<%= min %>:<%= sec %>&nbsp<%= postfix %>&nbsp - &nbsp<%= day %>&nbsp<%= month %>&nbsp<%= year %></td>
+                                <% price +=history[i].TOTAL_PRICE;
+                            total += history[i].DELIVERED_QUANTITY; %> 
+                            </tr>
+                <% if(pre != next){ %>
+                            <tr>
+                                <td>Total:</td>    
+                                <td></td>    
+                                <td><%= total %></td>    
+                                <td><%= price %></td>    
+                                <td>Thank You!</td>    
+                            </tr>
+                        </table>
+                        <% total = 0;
+                    price = 0; %>
+                </div>
+                <% } %>
+            <% } %>
+                            <tr>
+                                <td>Total:</td>    
+                                <td></td>    
+                                <td><%= total %></td>    
+                                <td><%= price %></td>    
+                                <td>Thank You!</td>    
+                            </tr>
+                        </table>
+                    </div>
+    <% } %> 
+</div>
+
+<%- include('../../partials/footer'); -%> 
